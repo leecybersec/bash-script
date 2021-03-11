@@ -66,7 +66,7 @@ recon ()
 }
 
 if [ $# -eq 0 ] || [ $1 = "-h" ] || [ $1 = "--help" ]; then
-	echo "Usage:" $0 "<HOST>"
+	echo "Usage: $0 <HOST>"
 	exit
 else
 	host=$1
