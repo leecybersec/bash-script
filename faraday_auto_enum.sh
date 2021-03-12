@@ -21,7 +21,7 @@ enum_all_port ()
 enum_open_service ()
 {
 	echo "nmap -sC -sV -p$2 $1"
-	nmap -sC -sV -p$2 $1
+	faraday-cli nmap -sC -sV -p$2 $1
 }
 
 enum_smtp_service ()
@@ -36,8 +36,8 @@ enum_http_service ()
 {
 	printf "${GREEN}$port\n${NC}"
 
-	echo "gobuster dir -w /usr/share/seclists/Discovery/Web-Content/common.txt -u http://$1:$2"
-	gobuster dir -w /usr/share/seclists/Discovery/Web-Content/common.txt -u http://$1:$2
+	echo "dirb http://$1:$2/ /usr/share/wordlists/dirb/common.txt"
+	faraday-cli dirb http://$1:$2/ /usr/share/wordlists/dirb/common.txt
 }
 
 enum_smb_service ()
@@ -56,7 +56,7 @@ recon ()
 	for port in $array_port; do
 
 		printf "${YELLOW}===============================================================\n${NC}"
-		
+
 		if [[ $port = "25" ]]; then
 			enum_smtp_service $host $port
 		elif [[ $port = "80" ]] || [[ $port = "443" ]]; then
