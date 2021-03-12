@@ -1,8 +1,14 @@
 # Auto Enum Script
 
-## [Faraday](https://github.com/infobyte/faraday)
+## Usage
 
-### Start server
+``` bash
+./faraday_auto_enum.sh <HOST>
+```
+
+### [Faraday Platform](https://github.com/infobyte/faraday)
+
+Start server
 
 ``` bash
 sudo systemctl start postgresql
@@ -12,7 +18,7 @@ sudo systemctl start postgresql
 sudo systemctl start faraday-server
 ```
 
-### Client
+Client
 
 ``` bash
 faraday-cli auth
@@ -22,13 +28,7 @@ faraday-cli auth
 faraday-cli select_ws demo
 ```
 
-## Usage
-
-``` bash
-./auto_enum.sh <HOST>
-```
-
-Example
+## Example
 
 ``` bash
 ┌──(Hades㉿192.168.11.130)-[1.7:36.5]~/bash_script
