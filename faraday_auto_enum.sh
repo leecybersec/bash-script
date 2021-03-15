@@ -36,8 +36,8 @@ enum_http_service ()
 {
 	printf "${GREEN}$port\n${NC}"
 
-	echo "dirb http://$1:$2/ /usr/share/wordlists/dirb/common.txt"
-	faraday-cli dirb http://$1:$2/ /usr/share/wordlists/dirb/common.txt
+	echo "dirb $url:$port /usr/share/wordlists/dirb/common.txt -r"
+	faraday-cli dirb $url:$port /usr/share/wordlists/dirb/common.txt -r
 }
 
 enum_smb_service ()
