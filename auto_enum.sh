@@ -8,62 +8,71 @@ origIFS="${IFS}"
 
 enum_all_port ()
 {
-	echo "nmap -p- --min-rate 1000 $1 | grep ^[0-9] | cut -d '/' -f1 | tr '\n' ',' | sed s/,$//"
+	echo "nmap -sS -p- --min-rate 1000 $1 | grep ^[0-9] | cut -d '/' -f1 | tr '\n' ',' | sed s/,$//"
 	
-	ports=$(nmap -p- --min-rate 1000 $1 | grep ^[0-9] | cut -d '/' -f1 | tr '\n' ',' | sed s/,$//)
+	ports=$(nmap -sS -p- --min-rate 1000 $1 | grep ^[0-9] | cut -d '/' -f1 | tr '\n' ',' | sed s/,$//)
 
 	if [ -z $ports ]; then
-		printf "${RED}[-]No open port!${NC}"
+		printf "${RED}[-]Found no port!${NC}"
 		exit
 	fi
 }
 
 enum_open_service ()
 {
-	echo "nmap -sC -sV -p$2 $1"
-	nmap -sC -sV -p$2 $1
+	echo "nmap -sC -sV $1 -p$2"
+	nmap -sC -sV $1 -p$2
 }
 
 enum_smtp_service ()
 {
-	printf "${GREEN}$port\n${NC}"
+	printf "${YELLOW}===============================$port===============================\n${NC}"
 
-	echo "nmap $1 -p $2 --script=smtp-*"
-	nmap $1 -p $2 --script=smtp-*
+	echo "nmap $host -p$port --script=smtp-*"
+	nmap $host -p$port --script=smtp-*
 }
 
 enum_http_service ()
 {
-	printf "${GREEN}$port\n${NC}"
+	printf "${YELLOW}===============================$port===============================\n${NC}"
 
-	echo "gobuster dir -w /usr/share/seclists/Discovery/Web-Content/common.txt -u http://$1:$2"
-	gobuster dir -w /usr/share/seclists/Discovery/Web-Content/common.txt -u http://$1:$2
+	echo "gobuster dir -u http://$host:$port -w /usr/share/seclists/Discovery/Web-Content/common.txt"
+	gobuster dir -u http://$host:$port -w /usr/share/seclists/Discovery/Web-Content/common.txt
 }
 
 enum_smb_service ()
 {
-	printf "${GREEN}$port\n${NC}"
+	printf "${YELLOW}===============================$port===============================\n${NC}"
 
-	echo "smbmap -H $1"
+	echo "smbmap -H $host"
 	smbmap -H $1
 
-	echo "smbclient -L $1"
+	echo "smbclient -L $host"
 	smbclient -L $1
 }
 
 recon ()
 {
 	for port in $array_port; do
-
-		printf "${YELLOW}===============================================================\n${NC}"
 		
-		if [[ $port = "25" ]]; then
-			enum_smtp_service $host $port
-		elif [[ $port = "80" ]] || [[ $port = "443" ]]; then
-			enum_http_service $host $port
-		elif [[ $port = "139" ]] || [[ $port = "445" ]]; then
-			enum_smb_service $host $port
-		fi
+		case $port in
+
+			"25")
+				enum_smtp_service $host $port
+			;;
+
+			"80" | "443")
+				enum_http_service $host $port
+			;;
+
+			"139" | "445")
+				enum_smb_service $host $port
+			;;
+
+			*)
+				printf "\n"
+			;;
+		esac
 	done
 }
 
