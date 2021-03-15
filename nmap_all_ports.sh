@@ -9,7 +9,7 @@ else
 	
 	if [ -z $ports ]
 	then
-		echo "No open port!"
+		echo "Found No port!"
 		exit
 	else
 		echo "Opening port: $ports"

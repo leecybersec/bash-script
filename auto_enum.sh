@@ -6,27 +6,37 @@ GREEN='\033[0;32m'
 NC='\033[0m'
 origIFS="${IFS}"
 
+if [ -z $1 ]; then
+	echo "Usage: $0 <HOST>"
+	exit
+else
+	host=$1
+fi
+
 enum_all_port ()
 {
-	echo "nmap -sS -p- --min-rate 1000 $1 | grep ^[0-9] | cut -d '/' -f1 | tr '\n' ',' | sed s/,$//"
+	echo "nmap -sS -p- --min-rate 1000 $host | grep ^[0-9] | cut -d '/' -f1 | tr '\n' ',' | sed s/,$//"
 	
-	ports=$(nmap -sS -p- --min-rate 1000 $1 | grep ^[0-9] | cut -d '/' -f1 | tr '\n' ',' | sed s/,$//)
+	ports=$(nmap -sS -p- --min-rate 1000 $host | grep ^[0-9] | cut -d '/' -f1 | tr '\n' ',' | sed s/,$//)
 
 	if [ -z $ports ]; then
-		printf "${RED}[-]Found no port!${NC}"
+		printf "${RED}[-] Found no port!${NC}"
 		exit
+	else
+		printf "${GREEN}[+] $ports\n${NC}"
+		array_ports=$(echo $ports | tr ',' '\n')
 	fi
 }
 
 enum_open_service ()
 {
 	echo "nmap -sC -sV $1 -p$2"
-	nmap -sC -sV $1 -p$2
+	nmap -sC -sV $host -p$ports
 }
 
 enum_smtp_service ()
 {
-	printf "${YELLOW}===============================$port===============================\n${NC}"
+	printf "\n${YELLOW}===============================$port===============================\n${NC}"
 
 	echo "nmap $host -p$port --script=smtp-*"
 	nmap $host -p$port --script=smtp-*
@@ -34,7 +44,7 @@ enum_smtp_service ()
 
 enum_http_service ()
 {
-	printf "${YELLOW}===============================$port===============================\n${NC}"
+	printf "\n${YELLOW}===============================$port===============================\n${NC}"
 
 	echo "gobuster dir -u http://$host:$port -w /usr/share/seclists/Discovery/Web-Content/common.txt"
 	gobuster dir -u http://$host:$port -w /usr/share/seclists/Discovery/Web-Content/common.txt
@@ -42,19 +52,18 @@ enum_http_service ()
 
 enum_smb_service ()
 {
-	printf "${YELLOW}===============================$port===============================\n${NC}"
+	printf "\n${YELLOW}===============================$port===============================\n${NC}"
 
 	echo "smbmap -H $host"
-	smbmap -H $1
+	smbmap -H $host
 
 	echo "smbclient -L $host"
-	smbclient -L $1
+	smbclient -L $host
 }
 
 recon ()
 {
-	for port in $array_port; do
-		
+	for port in $array_ports; do
 		case $port in
 
 			"25")
@@ -70,25 +79,19 @@ recon ()
 			;;
 
 			*)
-				printf "\n"
+				printf ""
 			;;
 		esac
 	done
 }
 
-if [ $# -eq 0 ] || [ $1 = "-h" ] || [ $1 = "--help" ]; then
-	echo "Usage: $0 <HOST>"
-	exit
-else
-	host=$1
-fi
+main ()
+{
+	enum_all_port $host
+	
+	enum_open_service $host $ports
 
-enum_all_port $host
+	recon $array_ports
+}
 
-printf "${GREEN}[+] $ports\n${NC}"
-
-enum_open_service $host $ports
-
-array_port=$(echo $ports | tr ',' '\n')
-
-recon $array_port
+main
