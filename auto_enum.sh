@@ -52,20 +52,16 @@ enum_smtp_service ()
 	nmap $host -p$port --script=smtp-*
 }
 
-enum_http_service ()
+enum_web_service ()
 {
-	printf "\n${YELLOW}===============================$port===============================\n${NC}"
+	printf "\n${YELLOW}===============================$url===============================\n${NC}"
 
-	echo "gobuster dir -u http://$host -w /usr/share/seclists/Discovery/Web-Content/common.txt"
-	gobuster dir -u http://$host -w /usr/share/seclists/Discovery/Web-Content/common.txt
-}
+	printf "\n${GREEN}[+] Files and directories\n${NC}"
+	echo "gobuster dir -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/common.txt"
+	gobuster dir -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/common.txt
 
-enum_https_service ()
-{
-	printf "\n${YELLOW}===============================$port===============================\n${NC}"
-
-	echo "gobuster dir -k -u https://$host -w /usr/share/seclists/Discovery/Web-Content/common.txt"
-	gobuster dir -k -u https://$host -w /usr/share/seclists/Discovery/Web-Content/common.txt
+	printf "\n${GREEN}[+] All URLs\n${NC}"
+	curl -k $url:$port -s -L | grep "title\|href" | sed -e 's/^[[:space:]]*//'
 }
 
 enum_smb_service ()
@@ -89,11 +85,13 @@ recon ()
 			;;
 
 			"80")
-				enum_http_service $host $port
+				url="http://$host"
+				enum_web_service $url $port
 			;;
 
 			"443")
-				enum_https_service $host $port
+				url="https://$host"
+				enum_web_service $url $port
 			;;
 
 			"139" | "445")
@@ -111,9 +109,9 @@ main ()
 {
 	enum_all_port $host
 	
-	enum_open_service $host $ports
+	# enum_open_service $host $ports
 
-	enum_vuln_service $host $ports
+	# enum_vuln_service $host $ports
 
 	recon $array_ports
 }
