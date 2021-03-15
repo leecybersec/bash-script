@@ -109,9 +109,9 @@ main ()
 {
 	enum_all_port $host
 	
-	# enum_open_service $host $ports
+	enum_open_service $host $ports
 
-	# enum_vuln_service $host $ports
+	enum_vuln_service $host $ports
 
 	recon $array_ports
 }
