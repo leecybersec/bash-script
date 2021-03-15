@@ -15,27 +15,31 @@ fi
 
 enum_all_port ()
 {
-	echo "nmap -sS -p- --min-rate 1000 $host | grep ^[0-9] | cut -d '/' -f1 | tr '\n' ',' | sed s/,$//"
+	printf "\n${YELLOW}Scanning openning port ...\n${NC}"
 	
 	ports=$(nmap -sS -p- --min-rate 1000 $host | grep ^[0-9] | cut -d '/' -f1 | tr '\n' ',' | sed s/,$//)
 
 	if [ -z $ports ]; then
-		printf "${RED}[-] Found no port!${NC}"
+		printf "${RED}[-] Found no openning port!${NC}"
 		exit
 	else
-		printf "${GREEN}[+] $ports\n${NC}"
+		printf "${GREEN}[+] Openning ports: $ports\n${NC}"
 		array_ports=$(echo $ports | tr ',' '\n')
 	fi
 }
 
 enum_open_service ()
 {
+	printf "\n${YELLOW}===============================services===============================\n${NC}"
+
 	echo "nmap -sC -sV $1 -p$2"
 	nmap -sC -sV $host -p$ports
 }
 
 enum_vuln_service ()
 {
+	printf "\n${YELLOW}===============================vuln===============================\n${NC}"
+
 	echo "nmap --script vuln $1 -p$2"
 	nmap --script vuln $host -p$ports
 }
@@ -52,8 +56,16 @@ enum_http_service ()
 {
 	printf "\n${YELLOW}===============================$port===============================\n${NC}"
 
-	echo "gobuster dir -u http://$host:$port -w /usr/share/seclists/Discovery/Web-Content/common.txt"
-	gobuster dir -u http://$host:$port -w /usr/share/seclists/Discovery/Web-Content/common.txt
+	echo "gobuster dir -u http://$host -w /usr/share/seclists/Discovery/Web-Content/common.txt"
+	gobuster dir -u http://$host -w /usr/share/seclists/Discovery/Web-Content/common.txt
+}
+
+enum_https_service ()
+{
+	printf "\n${YELLOW}===============================$port===============================\n${NC}"
+
+	echo "gobuster dir -k -u https://$host -w /usr/share/seclists/Discovery/Web-Content/common.txt"
+	gobuster dir -k -u https://$host -w /usr/share/seclists/Discovery/Web-Content/common.txt
 }
 
 enum_smb_service ()
@@ -76,8 +88,12 @@ recon ()
 				enum_smtp_service $host $port
 			;;
 
-			"80" | "443")
+			"80")
 				enum_http_service $host $port
+			;;
+
+			"443")
+				enum_https_service $host $port
 			;;
 
 			"139" | "445")
