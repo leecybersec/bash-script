@@ -36,14 +36,6 @@ enum_open_service ()
 	nmap -sC -sV $host -p$ports
 }
 
-enum_vuln_service ()
-{
-	printf "\n${YELLOW}===============================vuln===============================\n${NC}"
-
-	echo "nmap --script vuln $1 -p$2"
-	nmap --script vuln $host -p$ports
-}
-
 enum_smtp_service ()
 {
 	printf "\n${YELLOW}===============================$port===============================\n${NC}"
@@ -110,8 +102,6 @@ main ()
 	enum_all_port $host
 	
 	enum_open_service $host $ports
-
-	enum_vuln_service $host $ports
 
 	recon $array_ports
 }
