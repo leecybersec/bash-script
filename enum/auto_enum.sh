@@ -11,13 +11,16 @@ if [ -z $1 ]; then
 	exit
 else
 	host=$1
+	ports=$2
+	service=$3
 fi
 
 enum_all_port ()
 {
 	printf "\n${YELLOW}Scanning openning port ...\n${NC}"
-	
-	ports=$(nmap -sS -p- --min-rate 1000 $host | grep ^[0-9] | cut -d '/' -f1 | tr '\n' ',' | sed s/,$//)
+	if [ -z $ports ]; then
+		ports=$(nmap -sS -p- --min-rate 1000 $host | grep ^[0-9] | cut -d '/' -f1 | tr '\n' ',' | sed s/,$//)
+	fi
 
 	if [ -z $ports ]; then
 		printf "${RED}[-] Found no openning port!${NC}"
@@ -32,7 +35,7 @@ enum_open_service ()
 {
 	printf "\n${YELLOW}===============================services===============================\n${NC}"
 
-	echo "nmap -sC -sV $1 -p$2"
+	echo "nmap -sC -sV -Pn $1 -p$2"
 	nmap -sC -sV $host -p$ports
 }
 
@@ -40,7 +43,7 @@ enum_smtp_service ()
 {
 	printf "\n${YELLOW}===============================$port===============================\n${NC}"
 
-	echo "nmap $host -p$port --script=smtp-*"
+	echo "nmap $host -p$port -Pn --script=smtp-*"
 	nmap $host -p$port --script=smtp-*
 }
 
@@ -64,46 +67,69 @@ enum_smb_service ()
 	smbmap -H $host
 
 	echo "smbclient -L $host"
-	smbclient -L $host
+	smbclient -NL $host
 }
 
 recon ()
 {
-	for port in $array_ports; do
-		case $port in
+	if [ -z $service ]; then
+		
+		for port in $array_ports; do
+			if [ $port = "25" ]; then
 
-			"25")
 				enum_smtp_service $host $port
-			;;
 
-			"80")
+			elif [ $port = "80" ]; then
+
 				url="http://$host"
 				enum_web_service $url $port
-			;;
 
-			"443")
+			elif [ $port = "443" ]; then
+
 				url="https://$host"
 				enum_web_service $url $port
-			;;
 
-			"139" | "445")
+			elif [ $port = "445" ]; then
+
 				enum_smb_service $host $port
-			;;
 
-			*)
-				printf ""
-			;;
-		esac
-	done
+			fi
+		done
+
+	else
+
+		port=$ports		
+
+		if [ $service = "smtp" ]; then
+
+			enum_smtp_service $host $port
+
+		elif [ $service = "http" ]; then
+
+			url="http://$host"
+			enum_web_service $url $port
+
+		elif [ $service = "https" ]; then
+
+			url="https://$host"
+			enum_web_service $url $port
+
+		elif [ $service = "smb" ]; then
+
+			enum_smb_service $host $port
+
+		fi
+
+	fi
 }
 
 main ()
 {
-	enum_all_port $host
+	enum_all_port $host $ports
 	
 	enum_open_service $host $ports
 
-	recon $array_ports
+	recon $array_ports $service
 }
 
 main
