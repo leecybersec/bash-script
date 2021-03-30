@@ -13,6 +13,7 @@ if [ -z $2 ]; then
 fi
 
 printf "\n${YELLOW}Scanning Top $2 TCP port ...\n${NC}"
+echo "nmap --top-ports $2 $1 | grep ^[0-9] | cut -d '/' -f1 | tr '\n' ',' | sed s/,$//"
 
 ports=$(nmap --top-ports $2 $1 | grep ^[0-9] | cut -d '/' -f1 | tr '\n' ',' | sed s/,$//)
 

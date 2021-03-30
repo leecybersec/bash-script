@@ -18,9 +18,12 @@ if [[ $2 = "TCP" ]]; then
 	printf "\n${YELLOW}Scanning TCP port ... \n${NC}"
 
 	if [[ -z $3 ]]; then
+		echo "nmap -sS -p- $1 | grep ^[0-9] | cut -d '/' -f1 | tr '\n' ',' | sed s/,$//"
+
 		ports=$(nmap -sS -p- $1 | grep ^[0-9] | cut -d '/' -f1 | tr '\n' ',' | sed s/,$//)
 	else
-		printf "\nmin-rate=$3\n"
+		echo "nmap -sS -p- --min-rate $3 $1 | grep ^[0-9] | cut -d '/' -f1 | tr '\n' ',' | sed s/,$//"
+
 		ports=$(nmap -sS -p- --min-rate $3 $1 | grep ^[0-9] | cut -d '/' -f1 | tr '\n' ',' | sed s/,$//)
 	fi
 
@@ -29,9 +32,12 @@ elif [[ $2 = "UDP" ]]; then
 	printf "\n${YELLOW}Scanning UDP port ... \n${NC}"
 
 	if [[ -z $3 ]]; then
+		echo "nmap -sU -p- $1 | grep ^[0-9] | cut -d '/' -f1 | tr '\n' ',' | sed s/,$//"
+
 		ports=$(nmap -sU -p- $1 | grep ^[0-9] | cut -d '/' -f1 | tr '\n' ',' | sed s/,$//)
 	else
-		printf "\nmin-rate=$3\n"
+		echo "nmap -sU -p- --min-rate $3 $1 | grep ^[0-9] | cut -d '/' -f1 | tr '\n' ',' | sed s/,$//"
+		
 		ports=$(nmap -sU -p- --min-rate $3 $1 | grep ^[0-9] | cut -d '/' -f1 | tr '\n' ',' | sed s/,$//)
 	fi
 

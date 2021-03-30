@@ -6,22 +6,14 @@ GREEN='\033[0;32m'
 NC='\033[0m'
 origIFS="${IFS}"
 
-if [ -z $1 ]; then
-	echo "Usage: $0 <host> <serv> <port>"
+if [ -z $3 ]; then
+	echo "Usage: $0 <host> <port> <serv>"
 	exit
 else
 	host=$1
-	serv=$2
-	port=$3
+	port=$2
+	serv=$3
 fi
-
-enum_open_service ()
-{
-	printf "\n${YELLOW}### Services Enumeration ############################\n${NC}"
-
-	echo "nmap -sC -sV -Pn $1 -p$2"
-	nmap -sC -sV $host -p$ports
-}
 
 enum_smtp_service ()
 {
@@ -79,8 +71,6 @@ enum_services ()
 
 main ()
 {	
-	enum_open_service $host $port
-
 	enum_services $host $port $serv
 }
 

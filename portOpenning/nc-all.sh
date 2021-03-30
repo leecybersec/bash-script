@@ -15,11 +15,13 @@ fi
 if [[ $2 = "TCP" ]]; then
 
 	printf "\n${YELLOW}Scanning TCP port ...\n${NC}"
+	echo "nc -nv -w 1 -z $1 1-65535"
 	nc -nv -w 1 -z $1 1-65535
 
 elif [[ $2 = "UDP" ]]; then
 
 	printf "\n${YELLOW}Scanning UDP port ...\n${NC}"
+	echo "nc -nv -w 1 -z -u $1 1-65535"
 	nc -nv -w 1 -z -u $1 1-65535
 
 else
