@@ -7,33 +7,38 @@ NC='\033[0m'
 origIFS="${IFS}"
 
 if [ -z $1 ]; then
-	echo "Usage: $0 <HOST>"
+	echo "Usage: $0 <host>"
 	exit
 else
 	host=$1
 	ports=$2
-	service=$3
 fi
 
 enum_all_port ()
 {
-	printf "\n${YELLOW}Scanning openning port ...\n${NC}"
 	if [ -z $ports ]; then
-		ports=$(nmap -sS -p- --min-rate 1000 $host | grep ^[0-9] | cut -d '/' -f1 | tr '\n' ',' | sed s/,$//)
-	fi
 
-	if [ -z $ports ]; then
-		printf "${RED}[-] Found no openning port!${NC}"
-		exit
+		printf "\n${YELLOW}### Port Scanning ############################\n${NC}"
+
+		ports=$(nmap -sS -p- --min-rate 1000 $host | grep ^[0-9] | cut -d '/' -f1 | tr '\n' ',' | sed s/,$//)
+
+		if [ -z $ports ]; then
+			printf "${RED}[-] Found no open port!${NC}"
+			exit
+		else
+			printf "${GREEN}\n[+] Openning ports: $ports\n${NC}"
+			array_ports=$(echo $ports | tr ',' '\n')
+		fi
+
 	else
-		printf "${GREEN}[+] Openning ports: $ports\n${NC}"
-		array_ports=$(echo $ports | tr ',' '\n')
+		printf "${GREEN}\n### Enum ports from input: $ports\n${NC}"
+
 	fi
 }
 
 enum_open_service ()
 {
-	printf "\n${YELLOW}===============================services===============================\n${NC}"
+	printf "\n${YELLOW}### Services Enumeration ############################\n${NC}"
 
 	echo "nmap -sC -sV -Pn $1 -p$2"
 	nmap -sC -sV $host -p$ports
@@ -41,7 +46,7 @@ enum_open_service ()
 
 enum_smtp_service ()
 {
-	printf "\n${YELLOW}===============================$port===============================\n${NC}"
+	printf "\n${YELLOW}### SMTP Enumeration ($port) ############################\n${NC}"
 
 	echo "nmap $host -p$port -Pn --script=smtp-*"
 	nmap $host -p$port --script=smtp-*
@@ -49,7 +54,7 @@ enum_smtp_service ()
 
 enum_web_service ()
 {
-	printf "\n${YELLOW}===============================$url===============================\n${NC}"
+	printf "\n${YELLOW}### Web Enumeration ($port) ############################\n${NC}"
 
 	printf "\n${GREEN}[+] Files and directories\n${NC}"
 	echo "gobuster dir -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/common.txt"
@@ -61,7 +66,7 @@ enum_web_service ()
 
 enum_smb_service ()
 {
-	printf "\n${YELLOW}===============================$port===============================\n${NC}"
+	printf "\n${YELLOW}### SMB Enumeration ($port) ############################\n${NC}"
 
 	echo "smbmap -H $host"
 	smbmap -H $host
@@ -70,57 +75,29 @@ enum_smb_service ()
 	smbclient -NL $host
 }
 
-recon ()
+enum_services ()
 {
-	if [ -z $service ]; then
-		
-		for port in $array_ports; do
-			if [ $port = "25" ]; then
-
-				enum_smtp_service $host $port
-
-			elif [ $port = "80" ]; then
-
-				url="http://$host"
-				enum_web_service $url $port
-
-			elif [ $port = "443" ]; then
-
-				url="https://$host"
-				enum_web_service $url $port
-
-			elif [ $port = "445" ]; then
-
-				enum_smb_service $host $port
-
-			fi
-		done
-
-	else
-
-		port=$ports		
-
-		if [ $service = "smtp" ]; then
+	for port in $array_ports; do
+		if [ $port = "25" ]; then
 
 			enum_smtp_service $host $port
 
-		elif [ $service = "http" ]; then
+		elif [ $port = "80" ]; then
 
 			url="http://$host"
 			enum_web_service $url $port
 
-		elif [ $service = "https" ]; then
+		elif [ $port = "443" ]; then
 
 			url="https://$host"
 			enum_web_service $url $port
 
-		elif [ $service = "smb" ]; then
+		elif [ $port = "445" ]; then
 
 			enum_smb_service $host $port
 
 		fi
-
-	fi
+	done
 }
 
 main ()
@@ -129,7 +106,7 @@ main ()
 	
 	enum_open_service $host $ports
 
-	recon $array_ports $service
+	enum_services $host $array_ports
 }
 
 main
