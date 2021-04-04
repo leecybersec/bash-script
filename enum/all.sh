@@ -56,13 +56,16 @@ enum_smtp_service ()
 enum_web_service ()
 {
 	printf "\n${YELLOW}### Web Enumeration ($port) ############################\n${NC}"
+	
+	printf "\n${GREEN}[+] Header\n${NC}"
+	curl -I $url:$port
+
+	printf "\n${GREEN}[+] All URLs\n${NC}"
+	curl -k $url:$port -s -L | grep "title\|href" | sed -e 's/^[[:space:]]*//'
 
 	printf "\n${GREEN}[+] Files and directories\n${NC}"
 	echo "gobuster dir -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/common.txt"
 	gobuster dir -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/common.txt
-
-	printf "\n${GREEN}[+] All URLs\n${NC}"
-	curl -k $url:$port -s -L | grep "title\|href" | sed -e 's/^[[:space:]]*//'
 }
 
 enum_smb_service ()
