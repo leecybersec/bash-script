@@ -27,8 +27,14 @@ enum_dns_service ()
 {
 	printf "\n${YELLOW}### DNS Enumeration ($port) ############################\n${NC}"
 
-	echo "nmap $host -p$port --script dns-nsid"
-	nmap $host -p$port --script dns-nsid
+	echo "nslookup $host $host"
+	nslookup $host $host
+
+	echo "dig version.bind CHAOS TXT $host"
+	dig version.bind CHAOS TXT $host
+
+	echo "nmap $host -p$port -n --script \"(default and *dns*) or fcrdns or dns-srv-enum or dns-random-txid or dns-random-srcport\""
+	nmap $host -p$port -n --script "(default and *dns*) or fcrdns or dns-srv-enum or dns-random-txid or dns-random-srcport"
 }
 
 enum_web_service ()
