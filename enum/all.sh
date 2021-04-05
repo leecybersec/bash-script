@@ -72,14 +72,17 @@ enum_web_service ()
 	printf "\n${YELLOW}### Web Enumeration ($port) ############################\n${NC}"
 	
 	printf "\n${GREEN}[+] Header\n${NC}"
-	curl -I $url:$port
+	curl -k -I $url:$port
 
 	printf "\n${GREEN}[+] All URLs\n${NC}"
 	curl -k $url:$port -s -L | grep "title\|href" | sed -e 's/^[[:space:]]*//'
 
 	printf "\n${GREEN}[+] Files and directories\n${NC}"
+	echo "gobuster dir -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/directory-list-lowercase-2.3-medium.txt"
+	echo "gobuster dir -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/raft-medium-files-lowercase.txt"
 	echo "gobuster dir -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/common.txt"
-	gobuster dir -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/common.txt
+	echo "gobuster dir -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/big.txt"
+	gobuster dir -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/directory-list-lowercase-2.3-medium.txt
 }
 
 enum_smb_service ()
