@@ -55,7 +55,7 @@ enum_web_service ()
 	gobuster dir -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/directory-list-lowercase-2.3-medium.txt
 
 	printf "\n${GREEN}[+] Recon Tools\n${NC}"
-	echo "nikto $url:$port"
+	echo "nikto $host:$port"
 }
 
 enum_smb_service ()
@@ -82,12 +82,12 @@ enum_services ()
 	elif [ $serv = "http" ]; then
 
 		url="http://$host"
-		enum_web_service $url $port
+		enum_web_service $url $host $port
 
 	elif [ $serv = "https" ]; then
 
 		url="https://$host"
-		enum_web_service $url $port
+		enum_web_service $url $host $port
 
 	elif [ $serv = "smb" ]; then
 
