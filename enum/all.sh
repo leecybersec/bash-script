@@ -19,7 +19,7 @@ enum_all_port ()
 	if [ -z $ports ]; then
 
 		printf "\n${YELLOW}### Port Scanning ############################\n${NC}"
-		echo "nmap -sS -p- --min-rate 1000 $host | grep ^[0-9] | cut -d '/' -f1 | tr '\n' ',' | sed s/,$//"
+		echo "nmap -sS -p- --min-rate 1000 $host"
 
 		ports=$(nmap -sS -p- --min-rate 1000 $host | grep ^[0-9] | cut -d '/' -f1 | tr '\n' ',' | sed s/,$//)
 
