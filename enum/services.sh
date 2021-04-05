@@ -53,6 +53,9 @@ enum_web_service ()
 	echo "gobuster dir -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/common.txt"
 	echo "gobuster dir -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/big.txt"
 	gobuster dir -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/directory-list-lowercase-2.3-medium.txt
+
+	printf "\n${GREEN}[+] Recon Tools\n${NC}"
+	echo "nikto $url:$port"
 }
 
 enum_smb_service ()
