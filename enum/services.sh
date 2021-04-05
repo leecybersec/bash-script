@@ -23,6 +23,14 @@ enum_smtp_service ()
 	nmap $host -p$port --script=smtp-*
 }
 
+enum_dns_service ()
+{
+	printf "\n${YELLOW}### DNS Enumeration ($port) ############################\n${NC}"
+
+	echo "nmap $host -p$port --script dns-nsid"
+	nmap $host -p$port --script dns-nsid
+}
+
 enum_web_service ()
 {
 	printf "\n${YELLOW}### Web Enumeration ($port) ############################\n${NC}"
@@ -54,6 +62,10 @@ enum_services ()
 	if [ $serv = "smtp" ]; then
 
 		enum_smtp_service $host $port
+
+	elif [ $serv = "dns" ]; then
+
+		enum_dns_service $host $port
 
 	elif [ $serv = "http" ]; then
 
