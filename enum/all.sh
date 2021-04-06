@@ -92,8 +92,8 @@ enum_smb_service ()
 {
 	printf "\n${YELLOW}### SMB Enumeration ($port) ############################\n${NC}"
 
-	echo "smbmap -H $host"
-	smbmap -H $host
+	echo "smbmap -H $host -u guest"
+	smbmap -H $host -u guest
 
 	echo "smbclient -L $host"
 	smbclient -NL $host
