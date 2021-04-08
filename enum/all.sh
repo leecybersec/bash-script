@@ -75,7 +75,7 @@ enum_web_service ()
 	curl -k -I $url:$port
 
 	printf "\n${GREEN}[+] All URLs\n${NC}"
-	curl -k $url:$port -s -L | grep "title\|href" | sed -e 's/^[[:space:]]*//'
+	curl -k $url:$port -s -L | grep "title\|href\|file" | sed -e 's/^[[:space:]]*//'
 
 	printf "\n${GREEN}[+] Files and directories\n${NC}"
 	echo "gobuster dir -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/directory-list-lowercase-2.3-medium.txt"
