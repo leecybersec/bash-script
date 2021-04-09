@@ -55,7 +55,15 @@ enum_web_service ()
 	gobuster dir -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/directory-list-lowercase-2.3-medium.txt
 
 	printf "\n${GREEN}[+] Recon Tools\n${NC}"
-	echo "nikto $host:$port"
+	echo "nikto -h $host:$port"
+}
+
+enum_rpc_service ()
+{
+	printf "\n${YELLOW}### RPC Enumeration ($port) ############################\n${NC}"
+
+	echo "nmap -p $port --script=nfs-ls,nfs-statfs,nfs-showmount $host"
+	nmap -p $port --script=nfs-ls,nfs-statfs,nfs-showmount $host
 }
 
 enum_smb_service ()
@@ -88,6 +96,10 @@ enum_services ()
 
 		url="https://$host"
 		enum_web_service $url $host $port
+
+	elif [ $serv = "rpc" ]; then
+
+		enum_rpc_service $host $port
 
 	elif [ $serv = "smb" ]; then
 
