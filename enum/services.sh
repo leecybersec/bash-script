@@ -40,22 +40,23 @@ enum_dns_service ()
 enum_web_service ()
 {
 	printf "\n${YELLOW}### Web Enumeration ($port) ############################\n${NC}"
-	
+
+	printf "\n${GREEN}[+] Manual running if any\n${NC}"
+	echo "nikto -h $host:$port"
+	echo "gobuster dir -q -e -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/raft-medium-files-lowercase.txt &"
+	echo "gobuster dir -q -e -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/common.txt &"
+	echo "gobuster dir -q -e -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/big.txt &"
+
 	printf "\n${GREEN}[+] Header\n${NC}"
 	curl -k -I $url:$port
 
 	printf "\n${GREEN}[+] All URLs\n${NC}"
 	curl -k $url:$port -s -L | grep "title\|href\|file" | sed -e 's/^[[:space:]]*//'
-
+	
 	printf "\n${GREEN}[+] Files and directories\n${NC}"
-	echo "gobuster dir -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/directory-list-lowercase-2.3-medium.txt"
-	echo "gobuster dir -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/raft-medium-files-lowercase.txt"
-	echo "gobuster dir -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/common.txt"
-	echo "gobuster dir -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/big.txt"
-	gobuster dir -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/directory-list-lowercase-2.3-medium.txt
-
-	printf "\n${GREEN}[+] Recon Tools\n${NC}"
-	echo "nikto -h $host:$port"
+	echo "gobuster dir -q -e -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/directory-list-lowercase-2.3-medium.txt"
+	
+	gobuster dir -q -e -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/directory-list-lowercase-2.3-medium.txt
 }
 
 enum_rpc_service ()
