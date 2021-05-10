@@ -76,17 +76,22 @@ enum_web_service ()
 {
 	printf "\n${YELLOW}### Web Enumeration ($port) ############################\n${NC}"
 
-	printf "\n${GREEN}[+] Manual running if any\n${NC}"
-	echo "nikto -h $host:$port"
-	echo "gobuster dir -q -e -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/raft-medium-files-lowercase.txt &"
-	echo "gobuster dir -q -e -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/common.txt &"
-	echo "gobuster dir -q -e -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/big.txt &"
-
 	printf "\n${GREEN}[+] Header\n${NC}"
 	curl -k -I $url:$port
 
 	printf "\n${GREEN}[+] All URLs\n${NC}"
 	curl -k $url:$port -s -L | grep "title\|href\|file" | sed -e 's/^[[:space:]]*//'
+
+	printf "\n${GREEN}[+] Nikto Enum\n${NC}"
+	echo "nikto -h $host:$port"
+
+	printf "\n${GREEN}[+] Virtual Hosting\n${NC}"
+	echo "ffuf -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -u http://$host -H 'Host: FUZZ.$host' -fw number"
+
+	printf "\n${GREEN}[+] Other Wordlists\n${NC}"
+	echo "gobuster dir -q -e -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/raft-medium-files-lowercase.txt &"
+	echo "gobuster dir -q -e -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/common.txt &"
+	echo "gobuster dir -q -e -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/big.txt &"
 	
 	printf "\n${GREEN}[+] Files and directories\n${NC}"
 	echo "gobuster dir -q -e -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/directory-list-lowercase-2.3-medium.txt"
