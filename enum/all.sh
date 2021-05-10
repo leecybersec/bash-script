@@ -92,7 +92,13 @@ enum_web_service ()
 	echo "gobuster dir -q -e -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/raft-medium-files-lowercase.txt &"
 	echo "gobuster dir -q -e -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/common.txt &"
 	echo "gobuster dir -q -e -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/big.txt &"
-	
+
+	printf "\n${GREEN}[+] Using ffuf\n${NC}"
+	echo "ffuf -s -w /usr/share/seclists/Discovery/Web-Content/common.txt -u $url:$port/FUZZ &"
+	echo "ffuf -s -w /usr/share/seclists/Discovery/Web-Content/raft-medium-files-lowercase.txt -u $url:$port/FUZZ &"
+	echo "ffuf -s -w /usr/share/seclists/Discovery/Web-Content/big.txt -u $url:$port/FUZZ &"
+	echo "ffuf -s -w /usr/share/seclists/Discovery/Web-Content/directory-list-lowercase-2.3-medium.txt -u $url:$port/FUZZ &"
+
 	printf "\n${GREEN}[+] Files and directories\n${NC}"
 	echo "gobuster dir -q -e -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/directory-list-lowercase-2.3-medium.txt"
 	
