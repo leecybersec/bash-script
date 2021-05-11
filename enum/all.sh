@@ -89,9 +89,9 @@ enum_web_service ()
 	echo "ffuf -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -u http://$host -H 'Host: FUZZ.$host' -fw number"
 
 	printf "\n${GREEN}[+] Other Wordlists\n${NC}"
-	echo "gobuster dir -q -e -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/raft-medium-files-lowercase.txt &"
-	echo "gobuster dir -q -e -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/common.txt &"
 	echo "gobuster dir -q -e -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/big.txt &"
+	echo "gobuster dir -q -e -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/common.txt &"
+	echo "gobuster dir -q -e -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/raft-medium-files-lowercase.txt &"
 
 	printf "\n${GREEN}[+] Using ffuf\n${NC}"
 	echo "ffuf -s -w /usr/share/seclists/Discovery/Web-Content/common.txt -u $url:$port/FUZZ &"
