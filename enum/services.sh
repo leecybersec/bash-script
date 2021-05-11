@@ -130,11 +130,11 @@ enum_services ()
 
 	elif [ $serv = "snmp" ]; then
 
-		enum_smb_service $host $port
+		enum_snmp_service $host $port
 
 	elif [ $serv = "smb" ]; then
 
-		enum_snmp_service $host $port
+		enum_smb_service $host $port
 
 	elif [ $serv = "domain" ]; then
 
