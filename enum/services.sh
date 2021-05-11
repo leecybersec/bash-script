@@ -91,10 +91,10 @@ enum_smb_service ()
 	printf "\n${YELLOW}### SMB Enumeration ($port) ############################\n${NC}"
 
 	echo "smbmap -H $host"
-	smbmap -H $host -u guest
+	smbmap -H $host -P $port -u guest
 
 	echo "smbclient -L $host"
-	smbclient -NL $host
+	smbclient -NL $host -p $port
 }
 
 enum_domain_service ()
@@ -134,7 +134,7 @@ enum_services ()
 
 	elif [ $serv = "smb" ]; then
 
-		enum_smb_service $host $port
+		enum_snmp_service $host $port
 
 	elif [ $serv = "domain" ]; then
 
