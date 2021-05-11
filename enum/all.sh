@@ -113,6 +113,14 @@ enum_rpc_service ()
 	nmap -p $port --script=nfs-ls,nfs-statfs,nfs-showmount $host
 }
 
+enum_snmp_service ()
+{
+	printf "\n${YELLOW}### SNMP Enumeration ($port) ############################\n${NC}"
+
+	echo "snmp-check $host -p $port"
+	snmp-check $host -p $port
+}
+
 enum_smb_service ()
 {
 	printf "\n${YELLOW}### SMB Enumeration ($port) ############################\n${NC}"
@@ -148,6 +156,10 @@ enum_services ()
 		elif [ $port = "111" ]; then
 
 			enum_rpc_service $url $host $port
+		
+		elif [ $port = "161" ]; then
+
+			enum_snmp_service $host $port
 
 		elif [ $port = "445" ]; then
 
