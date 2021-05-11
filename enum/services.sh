@@ -95,6 +95,10 @@ enum_smb_service ()
 
 	echo "smbclient -L $host"
 	smbclient -NL $host -p $port
+
+	printf "\n${GREEN}[+] Nmap Vul Script\n${NC}"
+	echo "nmap --script smb-vul* $host -p $port"
+	nmap --script smb-vul* $host -p $port
 }
 
 enum_domain_service ()
