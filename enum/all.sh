@@ -33,13 +33,13 @@ enum_all_port ()
 			exit
 		else
 			printf "${GREEN}\n[+] Openning ports: $ports\n${NC}"
-			array_ports=$(echo $ports | tr ',' '\n')
 		fi
 
 	else
 		printf "${GREEN}\n### Enum ports from input: $ports\n${NC}"
-
 	fi
+
+	array_ports=$(echo $ports | tr ',' '\n')
 }
 
 enum_open_service ()
@@ -119,7 +119,7 @@ enum_snmp_service ()
 	printf "\n${YELLOW}### SNMP Enumeration ($port) ############################\n${NC}"
 
 	echo "snmp-check $host -p $port"
-	snmp-check $host -p $port
+	snmp-check $host
 }
 
 enum_smb_service ()
@@ -162,7 +162,7 @@ enum_services ()
 
 			enum_rpc_service $url $host $port
 		
-		elif [ $port = "161" ] or [ $port = "199" ]; then
+		elif [ $port = "161" ] || [ $port = "199" ]; then
 
 			enum_snmp_service $host $port
 

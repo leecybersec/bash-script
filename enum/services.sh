@@ -84,7 +84,7 @@ enum_snmp_service ()
 	printf "\n${YELLOW}### SNMP Enumeration ($port) ############################\n${NC}"
 
 	echo "snmp-check $host -p $port"
-	snmp-check $host -p $port
+	snmp-check $host
 }
 
 enum_smb_service ()
