@@ -162,7 +162,7 @@ enum_services ()
 
 			enum_rpc_service $url $host $port
 		
-		elif [ $port = "161" ]; then
+		elif [ $port = "161" ] or [ $port = "199" ]; then
 
 			enum_snmp_service $host $port
 
