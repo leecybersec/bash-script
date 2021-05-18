@@ -84,25 +84,9 @@ enum_web_service ()
 
 	printf "\n${GREEN}[+] Nikto Enum\n${NC}"
 	echo "nikto -h $host:$port"
-
-	printf "\n${GREEN}[+] Virtual Hosting\n${NC}"
-	echo "ffuf -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -u http://$host -H 'Host: FUZZ.$host' -fw number"
-
-	printf "\n${GREEN}[+] Other Wordlists\n${NC}"
-	echo "gobuster dir -q -e -k -u $url:$port\$uri -w /usr/share/seclists/Discovery/Web-Content/big.txt -x \$ext &"
-	echo "gobuster dir -q -e -k -u $url:$port\$uri -w /usr/share/seclists/Discovery/Web-Content/common.txt \$ext &"
-	echo "gobuster dir -q -e -k -u $url:$port\$uri -w /usr/share/seclists/Discovery/Web-Content/raft-medium-files-lowercase.txt \$ext &"
-	echo "gobuster dir -q -e -k -u $url:$port\$uri -w /usr/share/seclists/Discovery/Web-Content/directory-list-lowercase-2.3-medium.txt \$ext &"
-
-	printf "\n${GREEN}[+] Using ffuf\n${NC}"
-	echo "ffuf -s -w /usr/share/seclists/Discovery/Web-Content/common.txt -u $url:$port\$uriFUZZ -e \$ext &"
-	echo "ffuf -s -w /usr/share/seclists/Discovery/Web-Content/raft-medium-files-lowercase.txt -u $url:$port\$uriFUZZ -e \$ext &"
-	echo "ffuf -s -w /usr/share/seclists/Discovery/Web-Content/big.txt -u $url:$port\$uriFUZZ -e \$ext &"
-	echo "ffuf -s -w /usr/share/seclists/Discovery/Web-Content/directory-list-lowercase-2.3-medium.txt -u $url:$port\$uriFUZZ -e \$ext &"
-
+	
 	printf "\n${GREEN}[+] Files and directories\n${NC}"
 	echo "gobuster dir -q -e -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/directory-list-lowercase-2.3-medium.txt"
-	
 	gobuster dir -q -e -k -u $url:$port -w /usr/share/seclists/Discovery/Web-Content/directory-list-lowercase-2.3-medium.txt
 }
 
