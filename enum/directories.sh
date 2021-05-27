@@ -24,11 +24,10 @@ enum_web_service ()
 	file5='/usr/share/seclists/Discovery/Web-Content/raft-medium-directories-lowercase.txt'
 
 	printf "\n${GREEN}[+] Ffuf\n${NC}"
-	echo "ffuf -u $url/FUZZ -w /usr/share/seclists/Discovery/Web-Content/directory-list-lowercase-2.3-medium.txt"
-	echo "for file in \"$file1\" \"$file2\" \"$file3\" \"$file4\" \"$file5\"; do ffuf -s -w \$file -u \"$url/FUZZ\" -fs \$size &; done"
+	for file in $file{1..5}; do echo "ffuf -s -u \"$url/FUZZ\" -w $file -fs \$size &"; done
 
 	printf "\n${GREEN}[+] Gobuster\n${NC}"
-	echo "for file in \"$file1\" \"$file2\" \"$file3\" \"$file4\" \"$file5\"; do gobuster dir -q -e -k -u $url -w \$file &; done"
+	for file in $file{1..5}; do echo "gobuster dir -q -e -k -u $url -w $file &"; done
 }
 
 enum_web_service url
